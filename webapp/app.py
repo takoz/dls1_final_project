@@ -7,7 +7,6 @@ from ultralytics import YOLO
 
 import cv2
 import numpy as np
-import pandas as pd
 
 
 yolo26s_obb_summary = '''
