@@ -53,18 +53,18 @@ model_to_weights = {
 }
 
 
-def make_inference(model_path, image):
+def make_inference(model_path, image, conf, iou):
     file_bytes = np.asarray(bytearray(image.read()), dtype=np.uint8)
     opencv_image = cv2.imdecode(file_bytes, 1)
     image_array = opencv_image[..., ::-1]
 
     model = YOLO(model_path)
-    results = model.predict(source=image_array, save=False)
+    results = model.predict(source=image_array, conf=conf, iou=iou, save=False)
     img = results[0].plot()
     return results, img
 
 
-def showcase(model):
+def showcase(model, conf, iou):
  samples_dir = Path('res/samples/clean')
  gt_dir = Path('res/samples/gt')
  samples = samples_dir.glob('*.jpg')
@@ -81,12 +81,12 @@ def showcase(model):
    with open(gt_image, 'rb') as f:
      gt_images.append(io.BytesIO(f.read()))
 
- predict(model, sample_files, sample_names, gt_images)
+ predict(model, sample_files, sample_names, conf, iou, gt_images)
 
 
-def predict(model, images, image_names, gt_images=None):
+def predict(model, images, image_names, conf, iou, gt_images=None):
    for i, image in enumerate(images):
-     out, out_img = make_inference(model, image)
+     out, out_img = make_inference(model, image, conf, iou)
 
      st.divider()
 
@@ -104,12 +104,15 @@ def predict(model, images, image_names, gt_images=None):
      if gt_images is not None:
       col3.image(gt_images[i], caption='Ground truth', channels='RGB')
 
- 
-if __name__ =='__main__':
+
+def app():
   st.title('Bone Fracture Detection')
   st.set_page_config(layout="wide")
 
   sideb = st.sidebar
+
+  conf_slider = sideb.slider("Confidence Threshold", 0.0, 1.0, 0.25)
+  iou_slider = sideb.slider("IoU Threshold", 0.0, 1.0, 0.7)
 
   uploaded_files = sideb.file_uploader(
     'Choose an image file',
@@ -132,7 +135,12 @@ if __name__ =='__main__':
       st.write('No images provided')
     else:
       image_names = [image.name for image in uploaded_files]
-      predict(model_to_weights[model]['weights'], uploaded_files, image_names)
+      predict(model_to_weights[model]['weights'], uploaded_files,
+              image_names, conf_slider, iou_slider)
 
   if showcase_button:
-    showcase(model_to_weights[model]['weights'])
+    showcase(model_to_weights[model]['weights'], conf_slider, iou_slider)
+
+
+if __name__ =='__main__':
+  app()
