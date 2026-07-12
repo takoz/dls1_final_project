@@ -9,6 +9,8 @@ import cv2
 import numpy as np
 
 
+app_root = Path(__file__).parent.absolute()
+
 yolo26s_obb_summary = '''
 ```
 YOLO26s-obb summary (fused): 132 layers, 9,753,489 parameters, 0 gradients, 21.5 GFLOPs
@@ -42,11 +44,11 @@ YOLO26n-obb summary (fused): 132 layers, 2,447,577 parameters, 0 gradients, 5.4 
 
 model_to_weights = {
   'yolo26s-obb': {
-    'weights': os.path.join('res', 'models', 'yolo26s-obb.pt'),
+    'weights': app_root / 'res' / 'models' / 'yolo26s-obb.pt',
     'summary': yolo26s_obb_summary
   },
   'yolo26n-obb': {
-    'weights': os.path.join('res', 'models', 'yolo26n-obb.pt'),
+    'weights': app_root / 'res' / 'models' / 'yolo26n-obb.pt',
     'summary': yolo26n_obb_summary
   }
 }
@@ -64,8 +66,8 @@ def make_inference(model_path, image, conf, iou):
 
 
 def showcase(model, conf, iou):
- samples_dir = Path('res/samples/clean')
- gt_dir = Path('res/samples/gt')
+ samples_dir =  app_root / 'res' / 'samples' / 'clean'
+ gt_dir = app_root / 'res' / 'samples' / 'gt'
  samples = samples_dir.glob('*.jpg')
  sample_files = []
  sample_names = []
