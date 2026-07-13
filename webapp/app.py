@@ -41,6 +41,18 @@ YOLO26n-obb summary (fused): 132 layers, 2,447,577 parameters, 0 gradients, 5.4 
 ```
 '''
 
+yolov8n_obb_summary = '''
+```
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95)
+                   all        731        838       0.81      0.693      0.792      0.509
+        elbow positive        131        144      0.798       0.66      0.781      0.501
+      fingers positive        155        191      0.754      0.571      0.704       0.41
+      forearm fracture        124        138      0.876       0.87       0.91       0.62
+      humerus fracture        143        152       0.89       0.85      0.929       0.62
+     shoulder fracture        117        130      0.808      0.615      0.756      0.507
+        wrist positive         61         83      0.734       0.59      0.673      0.394
+```
+'''
 
 model_to_weights = {
   'yolo26s-obb': {
@@ -50,6 +62,10 @@ model_to_weights = {
   'yolo26n-obb': {
     'weights': app_root / 'res' / 'models' / 'yolo26n-obb.pt',
     'summary': yolo26n_obb_summary
+  },
+  'yolov8n-obb': {
+    'weights': app_root / 'res' / 'models' / 'yolov8n-obb.pt',
+    'summary': yolov8n_obb_summary
   }
 }
 
@@ -123,7 +139,7 @@ def app():
 
   model = sideb.selectbox(
     'Model',
-    ['yolo26s-obb', 'yolo26n-obb']
+    ['yolo26s-obb', 'yolo26n-obb', 'yolov8n-obb']
   )
 
   st.markdown(model_to_weights[model]['summary'])
